@@ -20,7 +20,7 @@ async function getLendingPool(signer) {
     signer
   );
   const lendingPoolAddress = await lendingPoolAddressesProvider.getLendingPool(); // get lending pool address fom provider
-  const lendingPool = await ethers.getContractAt("ILendingPool", lendingPoolAddress, accosignerunt); // get contract object
+  const lendingPool = await ethers.getContractAt("ILendingPool", lendingPoolAddress, signer); // get contract object
 
   return lendingPool;
 }
@@ -72,8 +72,8 @@ async function borrowDai(daiAddress, lendingPool, amountDaiToBorrow, account) {
 /**
  * Repay DAI to lending pool
  */
-async function repay(amount, daiAddress, lendingPool, account) {
-  await approveErc20(daiAddress, lendingPool.address, amount, account);
+async function repay(amount, daiAddress, lendingPool, account, signer) {
+  await approveErc20(daiAddress, lendingPool.address, amount, signer);
   const repayTx = await lendingPool.repay(daiAddress, amount, 1, account);
   await repayTx.wait(1);
   console.log("Repaid!");
@@ -132,7 +132,8 @@ async function main() {
     amountDaiToBorrowWei,
     networkConfig[network.config.chainId].daiToken,
     lendingPool,
-    deployer
+    deployer,
+    signer
   );
 
   // get updated borrow data
