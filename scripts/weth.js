@@ -31,7 +31,7 @@ async function getWeth() {
   // get WETH balance
   const wethBalance = await iWeth.balanceOf(deployer);
 
-  console.log(`Got ${wethBalance.toString()} WETH`);
+  console.log(`Got ${ethers.utils.formatEther(wethBalance)} WETH`);
 }
 
 module.exports = { getWeth, AMOUNT }

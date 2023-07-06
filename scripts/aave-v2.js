@@ -40,9 +40,9 @@ async function approveErc20(erc20Address, spenderAddress, amount, signer) {
  */
 async function getBorrowUserData(lendingPool, account) {
   const { totalCollateralETH, totalDebtETH, availableBorrowsETH } = await lendingPool.getUserAccountData(account);
-  console.log(`You have ${totalCollateralETH} worth of ETH deposited.`);
-  console.log(`You have ${totalDebtETH} worth of ETH borrowed.`);
-  console.log(`You can borrow ${availableBorrowsETH} worth of ETH.`);
+  console.log(`You have ${ethers.utils.formatEther(totalCollateralETH)} worth of ETH deposited.`);
+  console.log(`You have ${ethers.utils.formatEther(totalDebtETH)} worth of ETH borrowed.`);
+  console.log(`You can borrow ${ethers.utils.formatEther(availableBorrowsETH)} worth of ETH.`);
   return { availableBorrowsETH, totalDebtETH, totalCollateralETH }
 }
 
@@ -66,7 +66,7 @@ async function getDaiPrice() {
 async function borrowDai(daiAddress, lendingPool, amountDaiToBorrow, account) {
   const borrowTx = await lendingPool.borrow(daiAddress, amountDaiToBorrow, 1, 0, account);
   await borrowTx.wait(1);
-  console.log("DAI borrowed!");
+  console.log("DAI token borrowed!");
 }
 
 /**
@@ -76,7 +76,7 @@ async function repay(amount, daiAddress, lendingPool, account, signer) {
   await approveErc20(daiAddress, lendingPool.address, amount, signer);
   const repayTx = await lendingPool.repay(daiAddress, amount, 1, account);
   await repayTx.wait(1);
-  console.log("Repaid!");
+  console.log("DAI Repaid!");
 }
 
 async function main() {
@@ -102,7 +102,7 @@ async function main() {
 
   await lendingPool.deposit(wethTokenAddress, AMOUNT, deployer, 0);
 
-  console.log("Desposited!");
+  console.log("WETH Desposited!");
 
   let { availableBorrowsETH, totalDebtETH } = await getBorrowUserData(lendingPool, deployer);
 
@@ -114,7 +114,7 @@ async function main() {
 
   // convert DAI amount to wei
   const amountDaiToBorrowWei = ethers.utils.parseEther(amountDaiToBorrow.toString());
-  console.log(`You can borrow ${amountDaiToBorrow.toString()} DAI`);
+  console.log(`You can borrow ${ethers.utils.formatEther(amountDaiToBorrowWei)} DAI`);
 
   // borrow DAI
   await borrowDai(
