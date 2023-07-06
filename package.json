@@ -9,7 +9,7 @@
     "lint": "solhint 'contracts/*.sol'",
     "lint:fix": "solhint 'contracts/**/*.sol' --fix",
     "format": "prettier --write .",
-    "aave:v2": "npx hardhat run ./scripts/aave-v2.js"
+    "aave:v2": "npx hardhat run ./scripts/aave-v2.js --network hardhat"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
