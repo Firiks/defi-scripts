@@ -29,17 +29,17 @@ async function getLendingPool(signer) {
  * Approve address to spend ERC20
  */
 async function approveErc20(erc20Address, spenderAddress, amount, signer) {
-  const erc20Token = await ethers.getContractAt("IERC20", erc20Address, signer);
-  txResponse = await erc20Token.approve(spenderAddress, amount);
+  const erc20Token = await ethers.getContractAt("IERC20", erc20Address, signer); // get ERC20 contract object
+  txResponse = await erc20Token.approve(spenderAddress, amount); // approve spender to spend amount of ERC20
   await txResponse.wait(1);
-  console.log(`Approved ${spenderAddress} to spend ${amount.toString()} of ${erc20Address}`);
+  console.log(`Approved ${spenderAddress} to spend ${ethers.utils.formatEther(amount.toString())} of ${erc20Address}`);
 }
 
 /**
  * Get available borrow ETH, total debt ETH, and available collateral ETH
  */
 async function getBorrowUserData(lendingPool, account) {
-  const { totalCollateralETH, totalDebtETH, availableBorrowsETH } = await lendingPool.getUserAccountData(account);
+  const { totalCollateralETH, totalDebtETH, availableBorrowsETH } = await lendingPool.getUserAccountData(account); // returns user account data across all the reserves
   console.log(`You have ${ethers.utils.formatEther(totalCollateralETH)} worth of ETH deposited.`);
   console.log(`You have ${ethers.utils.formatEther(totalDebtETH)} worth of ETH borrowed.`);
   console.log(`You can borrow ${ethers.utils.formatEther(availableBorrowsETH)} worth of ETH.`);
@@ -56,7 +56,7 @@ async function getDaiPrice() {
   );
   const price = (await daiEthPriceFeed.latestRoundData())[1];
 
-  console.log(`The DAI/ETH price is ${price.toString()}`);
+  console.log(`The DAI/ETH price is ${ethers.utils.formatEther(price.toString())}`);
   return price;
 }
 
@@ -73,6 +73,7 @@ async function borrowDai(daiAddress, lendingPool, amountDaiToBorrow, account) {
  * Repay DAI to lending pool
  */
 async function repay(amount, daiAddress, lendingPool, account, signer) {
+  // approve lending pool to spend DAI
   await approveErc20(daiAddress, lendingPool.address, amount, signer);
   const repayTx = await lendingPool.repay(daiAddress, amount, 1, account);
   await repayTx.wait(1);
@@ -125,7 +126,7 @@ async function main() {
   );
 
   // get updated borrow data
-  await getBorrowUserData(lendingPool, deployer)
+  await getBorrowUserData(lendingPool, deployer);
 
   // repay DAI
   await repay(
